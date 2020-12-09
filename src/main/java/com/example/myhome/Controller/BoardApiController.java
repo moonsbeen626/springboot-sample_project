@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api") // board/api url과 매핑
 public class BoardApiController {
 
     @Autowired
@@ -39,7 +39,6 @@ public class BoardApiController {
 
     @PutMapping("/boards/{id}") //데이터 수정
     Board replaceBoard(@RequestBody Board newBoard, @PathVariable Long id) {
-
         return repository.findById(id)
                 .map(Board -> {
                     Board.setTitle(newBoard.getTitle());
