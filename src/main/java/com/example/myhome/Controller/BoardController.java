@@ -2,12 +2,15 @@ package com.example.myhome.Controller;
 
 import com.example.myhome.model.Board;
 import com.example.myhome.repository.BoardRepository;
+import com.example.myhome.service.BoardService;
 import com.example.myhome.validator.BoardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +25,9 @@ public class BoardController {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private BoardService boardService;
 
     @Autowired
     private BoardValidator boardValidator;
@@ -52,12 +58,15 @@ public class BoardController {
     }
 
     @PostMapping("/form")
-    public String boardSubmit(@Validated Board board, BindingResult bindingResult) {
+    public String boardSubmit(@Validated Board board, BindingResult bindingResult, Authentication authentication ) { //anthentication : 인증 정보가 담김
         boardValidator.validate(board, bindingResult); //유효값 검증
         if(bindingResult.hasErrors()){
             return "board/form";
         }
-        boardRepository.save(board);
+        //Authentication a = SecurityContextHolder.getContext().getAuthentication(); //인증정보 가져오는 또 다른 방법
+        String username = authentication.getName();
+        boardService.save(username, board); //user테이블에서 username을 가져와 board에 user를 set해줌
+       // boardRepository.save(board);
         return "redirect:/board/list"; //redirect키워드 주는 이유: return할때 키값(attribute)를 반환해야 하는데 해당 동작이 없으므로 포워딩.
                                         // -> 다시 list로 돌아가 list()함수 호출됨.
     }

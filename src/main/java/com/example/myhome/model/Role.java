@@ -1,5 +1,6 @@
 package com.example.myhome.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -16,5 +17,6 @@ public class Role {
     private String name;
 
     @ManyToMany(mappedBy = "roles")
+    @JsonIgnore //json으로 표시할 때 role이 가지고 있는 user를 표시하지 않음.
     private List<User> users;
 }
